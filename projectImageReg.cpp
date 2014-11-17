@@ -115,6 +115,10 @@ public:
     circle( filtered_image, imageCenter, 3, Scalar(0,255,0), -1, 8, 0 );
     
     fclose(outputFile);
+    
+    // Pass a message to elsewhere to control baxter
+    
+
 
     /// Show your results
     namedWindow( "Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE );
