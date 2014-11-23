@@ -17,6 +17,9 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <vector>
 
+// Message
+#include <project/centeringDirection.h>
+
 using namespace std;
 using namespace cv;
 
@@ -43,6 +46,8 @@ class ImageConverter
   image_transport::Publisher image_pub_;
   float minDist;
   int param1, param2, minRadius, maxRadius;
+  project::centeringDirection centering_msg;
+  ros::Publisher centering_pub;
   
 public:
   ImageConverter(char* ros_image_stream, float min_dist, int param_1, int param_2, int min_radius, int max_radius)
@@ -51,6 +56,10 @@ public:
 
     image_pub_ = it_.advertise("correll_ros2opencv", 1);
     image_sub_ = it_.subscribe(ros_image_stream, 1, &ImageConverter::imageCb, this);
+
+    centering_pub = Publisher("centering_msg", centering_msg);
+    nh_.publish(centering_pub);
+
 
     this->minDist = min_dist;
     this->param1 = param_1;
@@ -95,6 +104,9 @@ public:
     /// Apply the Hough Transform to find the circles
     cv::HoughCircles( filtered_image, circles, CV_HOUGH_GRADIENT, 1, minDist, param1, param2, minRadius, maxRadius);
     
+    Point imageCenter(cvRound(filtered_image.cols/2), cvRound(filtered_image.rows/2));
+    circle( filtered_image, imageCenter, 3, Scalar(0,255,0), -1, 8, 0 );
+
     FILE* outputFile = fopen("data.txt", "a");
 
     /// Draw the circles detected
@@ -103,16 +115,20 @@ public:
 	Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
 	int radius = cvRound(circles[i][2]);
 
-
+	// Log where the circle is
 	fprintf(outputFile, "(%i, %i), %i\n", center.x, center.y, radius);
+
+	// Message how to move baxter
+	centering_msg.deltaX = imageCenter.x - center.x;
+	centering_msg.deltaY = imageCenter.y - center.y;
+	centering_pub.publish(&centering_msg);
+	nh_.spinOnce();
+
 	// circle center
 	circle( filtered_image, center, 3, Scalar(0,255,0), -1, 8, 0 );
 	// circle outline
 	circle( filtered_image, center, radius, Scalar(0,0,255), 3, 8, 0 );
       }
-
-    Point imageCenter(cvRound(filtered_image.cols/2), cvRound(filtered_image.rows/2));
-    circle( filtered_image, imageCenter, 3, Scalar(0,255,0), -1, 8, 0 );
     
     fclose(outputFile);
     
