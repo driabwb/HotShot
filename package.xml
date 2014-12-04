@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+  <name>hotshot</name>
+  <version>1.0.0</version>
+  <description>
+    Super-basic visual servoing
+  </description>
+
+  <maintainer email="nbellowe@gmail.com">Nathan Bellowe</maintainer>
+  <author email="nbellowe@gmail.com">David Baird, Nathan Bellowe, Don't know anyone elses last name....</author>
+
+  <license>GPLv2</license>
+
+  <url>http://github.com/nbellowe/hotspot.git</url>
+  <url type="repository">git://github.com/nbellowe/hotspot.git</url>
+
+  <build_depend>rosconsole</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>std_msgs</build_depend>
+  
+  <run_depend>rosconsole</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+</package>
