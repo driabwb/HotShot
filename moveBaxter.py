@@ -6,7 +6,9 @@ import roslib
 import baxter_interface
 roslib.load_manifest('joint_position')
 
-
+def movement():
+    right = baxter_interface.Limb('right')
+    
 
 
 def main():

@@ -16,7 +16,7 @@ def process_imagelocation(data):
     pitch_pid.setPoint(current_value=data.y)
 
 def process_centerupdate(data):
-	angles = limb.joint_angles()
+    angles = limb.joint_angles()
     rospy.loginfo("Center heard x %d, y %d" % data.x, data.y)
     angles['right_s0'] = yaw_pid.update(current_value=data.x)
     angles['right_s1'] = pitch_pid.update(current_value=data.y)
@@ -24,7 +24,7 @@ def process_centerupdate(data):
  
 def listener():
     rospy.init_node('baxter_controller')
-    rospy.Subscriber("/hotshot_center", Point, process_centerupdate)
+    rospy.Subscriber("/centering_msg", Point, process_centerupdate)
     rospy.Subscriber("/hotshot_goal", Point, process_imagelocation)
 
     # spin() simply keeps python from exiting until this node is stopped

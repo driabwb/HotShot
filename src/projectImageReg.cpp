@@ -16,6 +16,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <vector>
+#include <std_msgs/Point.h>
 
 // Message
 #include <project/centeringDirection.h>
@@ -46,7 +47,7 @@ class ImageConverter
   image_transport::Publisher image_pub_;
   float minDist;
   int param1, param2, minRadius, maxRadius;
-  project::centeringDirection centering_msg;
+  std_msgs::Point centering_msg;
   ros::Publisher centering_pub;
   
 public:
@@ -119,8 +120,8 @@ public:
 	fprintf(outputFile, "(%i, %i), %i\n", center.x, center.y, radius);
 
 	// Message how to move baxter
-	centering_msg.deltaX = imageCenter.x - center.x;
-	centering_msg.deltaY = imageCenter.y - center.y;
+	centering_msg.x = imageCenter.x - center.x;
+	centering_msg.y = imageCenter.y - center.y;
 	centering_pub.publish(&centering_msg);
 	nh_.spinOnce();
 
