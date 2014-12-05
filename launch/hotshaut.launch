@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="HotShot" type="image_processor" name="TODO"> 
+
+  </node>
+</launch>
