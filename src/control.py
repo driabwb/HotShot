@@ -1,42 +1,63 @@
-#!/usr/bin/python
-
+#!/usr/bin/python3
+##NOTE PYTHON3
 import rospy
 import baxter_interface
 import roslib
-from pid import PID
 from hotshot.msg import centeringDirection
-x_pid = PID()
-y_pid = PID()
+
+class _P:
+	def __init__(self, nm,P=1):
+		self.name=n
+		self.Kp=P
+		self.set_point=0.0
+		self.error=0.0
+
+	def update(self,current_value):
+		"""
+		Calculate PID output value for given reference input and feedback
+		"""
+		self.last=self.P_value
+		self.error = self.set_point - current_value
+		self.new = self.Kp * self.error
+		rospy.loginfo("Updating joint %s from %d to value %d" % (self.name, self.last, self.new))
+		return self.new
+		
+	def setPoint(self,set_point):
+		"""
+		Set Point
+		"""
+		self.set_point = set_point
+		self.Integrator=0
+		self.Derivator=0
+
 roslib.load_manifest('joint_position')
-holdlocation=False
+hold_location=False
+rate=.1
 limb = baxter_interface.Limb('right')
 X = 'right_s0'
 Y = 'right_s1'
+Ps= { X:_P(), Y:_P() }
+	
 def invalid_data(data):
     return False #todo, filter
 
 def current_angle(joint):
     return limb.joint_angles()[joint] #simple facade
 
-def move_direction(joint, incr_value):
-    old_location = limb.joint_angles()[joint]
-    new_location += incr_value
-    rospy.loginfo('Moving joint %s from old location %d to new location %d' % (joint, old_location, new_location))
-    limb.joint_angles()[joint] = new_location
-    
-def process_imagelocation(data):
+def move_direction(joint, upd):
+	p=Ps[joint]
+	p.setPoint(upd)
+	new_value = p.update(current_angle(joint))
+	limb.joint_angles()[joint] = new_value
+
+def update(data):
     if not hold_location:
-        if not invalid_data(data):
+        if invalid_data(data):
             rospy.loginfo("Some sort of invalid data was caught by the filter.")
             return
         rospy.loginfo("Goal heard (x,y):", data.deltaX, data.deltaY)
-        x_pid.setPoint(data.deltaX)
-	y_pid.setPoint(data.deltaY)
-	x_pid.update(current_angle(X))
-	y_pid.update(current_angle(Y))
-	# math logic goes here -- track difference between current center and found
-        move_direction(X, data.deltaX)
-        move_direction(Y, data.deltay)
+        move(X, data.deltaX)
+        move(Y, data.deltaY)
     else:
         rospy.loginfo("Holding location currently.")
 
@@ -45,18 +66,13 @@ def main():
     rospy.init_node('hotshot_control')
     
     rospy.loginfo("Subscribing to hotshot_goal topic...")
-    rospy.Subscriber("/centering", centeringDirection, process_imagelocation)
+    rospy.Subscriber("/centering", centeringDirection, update)
     
     rs = baxter_interface.RobotEnable()
     rospy.loginfo("Enabling robot, if not enabled...")
     rs.enable()
-    
-    rospy.spin()     # spin() simply keeps python from exiting until this node is stopped
-    
-"""
-So, guys, some quick thoughts on this.
+    while True:
+    	rospy.spin()
 
-We need a filter to make sure that invalid object recognition messages don't make baxtor slap someone in the face or something. 
-We need a 
-"""
-
+if __name__ == '__main__':
+	main()
