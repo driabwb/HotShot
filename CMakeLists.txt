@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
-add_executable(hotshot_image src/projectImageReg.cpp)
+add_executable(hotshot_image src/hotshot_image.cpp)
 target_link_libraries(hotshot_image ${catkin_LIBRARIES})
 
   # Declare the message files to be built
