@@ -1,5 +1,8 @@
 <launch>
-  <node pkg="HotShot" type="image_processor" name="TODO"> 
+  <!-- By default, we are not in debug mode -->
+  <arg name="debug" default="false" />
+  
+  <node pkg="hotshot" type="hotshot_control" name="controller"/>
+  <node pkg="hotshot" type="hotshot_image" name="image_processor"/>
 
-  </node>
 </launch>
