@@ -1,19 +1,23 @@
+#!/usr/bin/python
+
 import rospy
 import baxter_interface
-from std_msgs.msg import Point
 import roslib
-
+from pid import PID
+from hotshot.msg import centeringDirection
+x_pid = PID()
+y_pid = PID()
 roslib.load_manifest('joint_position')
 holdlocation=False
 limb = baxter_interface.Limb('right')
-
+X = 'right_s0'
+Y = 'right_s1'
 def invalid_data(data):
     return False #todo, filter
 
 def current_angle(joint):
     return limb.joint_angles()[joint] #simple facade
 
-logged_moves = []
 def move_direction(joint, incr_value):
     old_location = limb.joint_angles()[joint]
     new_location += incr_value
@@ -25,10 +29,14 @@ def process_imagelocation(data):
         if not invalid_data(data):
             rospy.loginfo("Some sort of invalid data was caught by the filter.")
             return
-        rospy.loginfo("Goal heard (x,y):", data.x, data.y)
-        # math logic goes here -- track difference between current center and found
-        move_direction('right_s0', data.x)
-        move_direction('right_s1', data.y)
+        rospy.loginfo("Goal heard (x,y):", data.deltaX, data.deltaY)
+        x_pid.setPoint(data.deltaX)
+	y_pid.setPoint(data.deltaY)
+	x_pid.update(current_angle(X))
+	y_pid.update(current_angle(Y))
+	# math logic goes here -- track difference between current center and found
+        move_direction(X, data.deltaX)
+        move_direction(Y, data.deltay)
     else:
         rospy.loginfo("Holding location currently.")
 
@@ -37,7 +45,7 @@ def main():
     rospy.init_node('hotshot_control')
     
     rospy.loginfo("Subscribing to hotshot_goal topic...")
-    rospy.Subscriber("/hotshot_goal", Point, process_imagelocation)
+    rospy.Subscriber("/centering", centeringDirection, process_imagelocation)
     
     rs = baxter_interface.RobotEnable()
     rospy.loginfo("Enabling robot, if not enabled...")

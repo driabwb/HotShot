@@ -29,3 +29,6 @@
 
 # temp files
 *~
+
+# pyc files
+*.pyc
