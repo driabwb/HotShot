@@ -31,5 +31,5 @@ In CMakeLists.txt
 
 # Usage
 
-## Start the visual servoing launch script
-	$ roslaunch demo_pioneer hotshot.launch
+# Start both
+	$ roslaunch hotshot hotshot.launch
