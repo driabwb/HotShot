@@ -3,6 +3,9 @@
   <arg name="debug" default="false" />
   
   <node pkg="hotshot" type="hotshot_control" name="controller"/>
-  <node pkg="hotshot" type="hotshot_image" name="image_processor"/>
+  <node pkg="hotshot" type="hotshot_image" name="image_processor">
+    <param name="image_channel" value="/cameras/right_hand_camera/image" />
+  </node>
+
 
 </launch>
