@@ -154,7 +154,7 @@ int main(int argc, char** argv)
     ros::spin();
     return 0;
   } else {
-    std::cout<<"ERROR:\tusage - RosToOpencvImage <ros_image_topic>"<<std::endl;
+    std::cout<<"ERROR:\tusage - rosrun hotshot hotshot_image <ros_image_topic>"<<std::endl;
     return 1;
   }
 }
