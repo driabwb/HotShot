@@ -12,9 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
-add_executable(RosToOpencvImage src/projectImageReg.cpp)
-target_link_libraries(RosToOpencvImage ${catkin_LIBRARIES})
-
+add_executable(hotshot_image src/projectImageReg.cpp)
+target_link_libraries(hotshot_image ${catkin_LIBRARIES})
 
   # Declare the message files to be built
 add_message_files(FILES
