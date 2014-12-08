@@ -17,13 +17,14 @@
 
 class PID:
 	"""
-	Discrete PID control
+	Don't care enough to do a proper facade so I'm just stealing this. Nathan
 	"""
 
-	def __init__(self, P=2.0, I=0.0, D=1.0, Derivator=0, Integrator=0, Integrator_max=500, Integrator_min=-500):
-
+	def __init__(self, P=2.0, I=None, #should be 0, this will be used later
+			D=1.0, Derivator=0, Integrator=0, Integrator_max=500, Integrator_min=-500):
+		self.temp=I
 		self.Kp=P
-		self.Ki=I
+		self.Ki=0 if I is None else I
 		self.Kd=D
 		self.Derivator=Derivator
 		self.Integrator=Integrator
@@ -37,25 +38,22 @@ class PID:
 		"""
 		Calculate PID output value for given reference input and feedback
 		"""
-
 		self.error = self.set_point - current_value
-
 		self.P_value = self.Kp * self.error
-		self.D_value = self.Kd * ( self.error - self.Derivator)
-		self.Derivator = self.error
 
-		self.Integrator = self.Integrator + self.error
-
-		if self.Integrator > self.Integrator_max:
-			self.Integrator = self.Integrator_max
-		elif self.Integrator < self.Integrator_min:
-			self.Integrator = self.Integrator_min
-
-		self.I_value = self.Integrator * self.Ki
-
-		PID = self.P_value + self.I_value + self.D_value
-
-		return PID
+		if self.temp==None: #not this method....
+			self.D_value = self.Kd * ( self.error - self.Derivator)
+			self.Derivator = self.error
+			self.Integrator = self.Integrator + self.error
+			if self.Integrator > self.Integrator_max:
+				self.Integrator = self.Integrator_max
+			elif self.Integrator < self.Integrator_min:
+				self.Integrator = self.Integrator_min
+			self.I_value = self.Integrator * self.Ki
+			PID = self.P_value + self.I_value + self.D_value
+			return PID
+		#my code:
+		return self.P_value
 
 	def setPoint(self,set_point):
 		"""
