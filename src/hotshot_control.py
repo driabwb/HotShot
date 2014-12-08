@@ -13,19 +13,13 @@ class _P:
 		self.error=0.0
 
 	def update(self,current_value):
-		"""
-		Calculate PID output value for given reference input and feedback
-		"""
-		self.last=self.P_value
+		self.last=self.new
 		self.error = self.set_point - current_value
 		self.new = self.Kp * self.error
 		rospy.loginfo("Updating joint %s from %d to value %d" % (self.name, self.last, self.new))
 		return self.new
 		
 	def setPoint(self,set_point):
-		"""
-		Set Point
-		"""
 		self.set_point = set_point
 		self.Integrator=0
 		self.Derivator=0
