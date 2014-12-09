@@ -2,7 +2,7 @@
 ##NOTE PYTHON3
 import rospy
 import baxter_interface
-import roslib
+import roslib; roslib.load_manifest('hotshot')
 from hotshot.msg import centeringDirection
 
 class _P:
@@ -24,10 +24,11 @@ class _P:
 		self.Integrator=0
 		self.Derivator=0
 
-roslib.load_manifest('joint_position')
 hold_location=False
 rate=.1
-limb = baxter_interface.Limb('right')
+RIGHT = baxter_interface.Limb('right')
+LEFT =  baxter_interface.Limb('right')
+CURRENT
 X = 'right_s0'
 Y = 'right_s1'
 Ps= { X:_P(), Y:_P() }
@@ -36,13 +37,15 @@ def invalid_data(data):
     return False #todo, filter
 
 def current_angle(joint):
-    return limb.joint_angles()[joint] #simple facade
+    return CURRENT.joint_angles()[joint] #simple facade
 
 def move_direction(joint, upd):
 	p=Ps[joint]
 	p.setPoint(upd)
 	new_value = p.update(current_angle(joint))
-	limb.joint_angles()[joint] = new_value
+	new_angles = CURRENT.joint_angles()
+	new_angles[joint] = new_value
+	CURRENT.set_joint_positions(new_value)
 
 def update(data):
     if not hold_location:
@@ -58,7 +61,7 @@ def update(data):
 def main():
     rospy.loginfo("Initializing control node...")
     rospy.init_node('hotshot_control')
-    
+    rospy.get_param('image_channel')
     rospy.loginfo("Subscribing to hotshot_goal topic...")
     rospy.Subscriber("/centering", centeringDirection, update)
     
