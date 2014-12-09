@@ -27,7 +27,7 @@ class _P:
 hold_location=False
 rate=.1
 RIGHT = baxter_interface.Limb('right')
-LEFT =  baxter_interface.Limb('right')
+LEFT =  baxter_interface.Limb('left')
 CURRENT
 X = 'right_s0'
 Y = 'right_s1'
