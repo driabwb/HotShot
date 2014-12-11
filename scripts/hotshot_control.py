@@ -28,7 +28,7 @@ hold_location=False
 rate=.1
 RIGHT = baxter_interface.Limb('right')
 LEFT =  baxter_interface.Limb('left')
-CURRENT
+CURRENT=RIGHT
 X = 'right_s0'
 Y = 'right_s1'
 Ps= { X:_P(), Y:_P() }
@@ -45,7 +45,7 @@ def move_direction(joint, upd):
 	new_value = p.update(current_angle(joint))
 	new_angles = CURRENT.joint_angles()
 	new_angles[joint] = new_value
-	CURRENT.set_joint_positions(new_value)
+	CURRENT.set_joint_positions(new_angles)
 
 def update(data):
     if not hold_location:
@@ -53,8 +53,8 @@ def update(data):
             rospy.loginfo("Some sort of invalid data was caught by the filter.")
             return
         rospy.loginfo("Goal heard (x,y):", data.deltaX, data.deltaY)
-        move(X, data.deltaX)
-        move(Y, data.deltaY)
+        move_direction(X, data.deltaX)
+        move_direction(Y, data.deltaY)
     else:
         rospy.loginfo("Holding location currently.")
 
