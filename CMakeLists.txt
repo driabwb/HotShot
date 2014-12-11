@@ -13,17 +13,14 @@ find_package(catkin
   baxter_interface
  image_transport
   )
-include_directories(
-    ${catkin_INCLUDE_DIRS}
-    )
-add_executable(hotshot_image src/hotshot_image.cpp)
-target_link_libraries(hotshot_image ${catkin_LIBRARIES})
+
 # Declare the message files to be built
 add_message_files(FILES
     centeringDirection.msg
     )
 # Actually generate the language-specific message and service files
 generate_messages(DEPENDENCIES std_msgs sensor_msgs)
+
 
 catkin_package(
   CATKIN_DEPENDS
@@ -37,4 +34,13 @@ catkin_package(
   baxter_core_msgs
   baxter_interface
 )
+
+include_directories(
+    ${catkin_INCLUDE_DIRS}
+    )
+
+
+add_executable(hotshot_image src/hotshot_image.cpp)
+target_link_libraries(hotshot_image ${catkin_LIBRARIES})
+
 
