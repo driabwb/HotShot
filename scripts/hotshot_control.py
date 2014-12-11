@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-##NOTE PYTHON3
+#!/usr/bin/python
 import rospy
 import baxter_interface
 import roslib; roslib.load_manifest('hotshot')
@@ -7,7 +6,7 @@ from hotshot.msg import centeringDirection
 
 class _P:
 	def __init__(self, nm,P=1):
-		self.name=n
+		self.name=nm
 		self.Kp=P
 		self.set_point=0.0
 		self.error=0.0
@@ -16,7 +15,8 @@ class _P:
 		self.last=self.new
 		self.error = self.set_point - current_value
 		self.new = self.Kp * self.error
-		rospy.loginfo("Updating joint %s from %d to value %d" % (self.name, self.last, self.new))
+		rospy.loginfo("Updating joint %s from %d to value %d"
+                        % (self.name, self.last, self.new))
 		return self.new
 		
 	def setPoint(self,set_point):
@@ -26,12 +26,9 @@ class _P:
 
 hold_location=False
 rate=.1
-RIGHT = baxter_interface.Limb('right')
-LEFT =  baxter_interface.Limb('left')
-CURRENT
 X = 'right_s0'
 Y = 'right_s1'
-Ps= { X:_P(), Y:_P() }
+Ps= { X:_P('x'), Y:_P('y') }
 	
 def invalid_data(data):
     return False #todo, filter
@@ -61,10 +58,10 @@ def update(data):
 def main():
     rospy.loginfo("Initializing control node...")
     rospy.init_node('hotshot_control')
-    rospy.get_param('image_channel')
+    #rospy.get_param('image_channel')
     rospy.loginfo("Subscribing to hotshot_goal topic...")
     rospy.Subscriber("/centering", centeringDirection, update)
-    
+    CURRENT=baxter_interface.Limb('right')
     rs = baxter_interface.RobotEnable()
     rospy.loginfo("Enabling robot, if not enabled...")
     rs.enable()
@@ -72,4 +69,4 @@ def main():
     	rospy.spin()
 
 if __name__ == '__main__':
-	main()
+    main()
