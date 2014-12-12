@@ -3,7 +3,7 @@ import rospy
 import baxter_interface
 import roslib; roslib.load_manifest('hotshot')
 from hotshot.msg import centeringDirection
-
+from trigger import fire
 hold_location=False
 rate=.1
 X = 'right_s0'
@@ -41,7 +41,8 @@ def update(data):
 	if within_circle(xpos, ypos):
 	    HOLD_LOCATION['value'] = True
             rospy.loginfo("Within circle.")
-            return
+            fire()
+	    return
         rospy.loginfo("Goal heard (%d, %d):" % (xpos, ypos))
 	new_angles = baxter_interface.Limb('right').joint_angles()
 	new_angles[X] += x_movement * factor
