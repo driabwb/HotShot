@@ -57,7 +57,7 @@ public:
     image_pub_ = it_.advertise("correll_ros2opencv", 1);
     image_sub_ = it_.subscribe(ros_image_stream, 1, &ImageConverter::imageCb, this);
 
-    centering_pub = nh_.advertise<hotshot::centeringDirection>("centering",100);
+    centering_pub = nh_.advertise<hotshot::centeringDirection>("centering",1);
 
 
     this->minDist = min_dist;
